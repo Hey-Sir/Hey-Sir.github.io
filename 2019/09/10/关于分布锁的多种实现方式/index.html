@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>很拽的小鲁班</title>
+  <title>关于分布锁的多种实现方式 | 很拽的小鲁班</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="很拽的小鲁班">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="在很多场景中，我们为了保证数据的最终一致性，需要很多的技术方案来支持，比如分布式事务、分布式锁等。有的时候，我们需要保证一个方法在同一时间内只能被一个线程执行。在单机环境中，JAVA中其实提供很多并发处理相关的API，但是这些api在分布式场景中就无能为力了。也就是说单纯的java Api并不能提供分布式锁的能力。所以针对分布式锁的实现目前有多种方案 比较常见的有以下几种方案:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于分布锁的多种实现方式">
+<meta property="og:url" content="http://example.com/2019/09/10/%E5%85%B3%E4%BA%8E%E5%88%86%E5%B8%83%E9%94%81%E7%9A%84%E5%A4%9A%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/index.html">
 <meta property="og:site_name" content="很拽的小鲁班">
+<meta property="og:description" content="在很多场景中，我们为了保证数据的最终一致性，需要很多的技术方案来支持，比如分布式事务、分布式锁等。有的时候，我们需要保证一个方法在同一时间内只能被一个线程执行。在单机环境中，JAVA中其实提供很多并发处理相关的API，但是这些api在分布式场景中就无能为力了。也就是说单纯的java Api并不能提供分布式锁的能力。所以针对分布式锁的实现目前有多种方案 比较常见的有以下几种方案:">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-09-10T06:14:16.000Z">
+<meta property="article:modified_time" content="2020-09-06T06:28:15.179Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="分布式锁">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="很拽的小鲁班" type="application/atom+xml">
@@ -156,193 +161,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-关于HTTP协议，一篇就够了" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-关于分布锁的多种实现方式" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/06/%E5%85%B3%E4%BA%8EHTTP%E5%8D%8F%E8%AE%AE%EF%BC%8C%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86/">关于HTTP协议，一篇就够了</a>
-    </h1>
-  
-
-        
-        <a href="/2020/09/06/%E5%85%B3%E4%BA%8EHTTP%E5%8D%8F%E8%AE%AE%EF%BC%8C%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86/" class="archive-article-date">
-  	<time datetime="2020-09-06T06:38:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一、HTTP 简介</p>
-<p>1、http协议，超文本传输协议（hypertext transfer protocol），是一种详细规定了浏览器和万维网服务器之间互相通信的规则，通过因特网传送万维网文档的数据传送协议</p>
-        
-          <a class="article-more-a" href="/2020/09/06/%E5%85%B3%E4%BA%8EHTTP%E5%8D%8F%E8%AE%AE%EF%BC%8C%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">HTTP</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">协议</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">网络传输</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/09/06/%E5%85%B3%E4%BA%8EHTTP%E5%8D%8F%E8%AE%AE%EF%BC%8C%E4%B8%80%E7%AF%87%E5%B0%B1%E5%A4%9F%E4%BA%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-JAVA基础面试题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/11/JAVA%E5%9F%BA%E7%A1%80%E9%9D%A2%E8%AF%95%E9%A2%98/">JAVA基础面试题</a>
-    </h1>
-  
-
-        
-        <a href="/2019/09/11/JAVA%E5%9F%BA%E7%A1%80%E9%9D%A2%E8%AF%95%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2019-09-11T09:35:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h6 id="1、异常的分类"><a href="#1、异常的分类" class="headerlink" title="1、异常的分类"></a>1、异常的分类</h6><p> throwable 分为 error 和 exception</p>
-<p> error 错误有jvm处理</p>
-<p> exception 分为运行时异常 和 非运行时异常</p>
-<p> 运行时异常 比如 int a = 1/0</p>
-<p> 非运行时异常必须去捕获 或者继续跑出</p>
-        
-          <a class="article-more-a" href="/2019/09/11/JAVA%E5%9F%BA%E7%A1%80%E9%9D%A2%E8%AF%95%E9%A2%98/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">面试题</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Spring</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/09/11/JAVA%E5%9F%BA%E7%A1%80%E9%9D%A2%E8%AF%95%E9%A2%98/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-关于分布锁的多种实现方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/10/%E5%85%B3%E4%BA%8E%E5%88%86%E5%B8%83%E9%94%81%E7%9A%84%E5%A4%9A%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">关于分布锁的多种实现方式</a>
+    <h1 class="article-title" itemprop="name">
+      关于分布锁的多种实现方式
     </h1>
   
 
@@ -357,11 +183,79 @@
       
         <p>在很多场景中，我们为了保证数据的最终一致性，需要很多的技术方案来支持，比如分布式事务、分布式锁等。有的时候，我们需要保证一个方法在同一时间内只能被一个线程执行。在单机环境中，JAVA中其实提供很多并发处理相关的API，但是这些api在分布式场景中就无能为力了。也就是说单纯的java Api并不能提供分布式锁的能力。所以针对分布式锁的实现目前有多种方案</p>
 <p>比较常见的有以下几种方案:</p>
-        
-          <a class="article-more-a" href="/2019/09/10/%E5%85%B3%E4%BA%8E%E5%88%86%E5%B8%83%E9%94%81%E7%9A%84%E5%A4%9A%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#more">more >></a>
-        
+<a id="more"></a>
+
+<p>1、基于数据库实现的分布式锁</p>
+<p>2、基于缓存实现分布式锁（常见）</p>
+<p>3、基于zookeeper实现分布式锁（常见）</p>
+<p>4、基于文件的分布式锁</p>
+<p>详谈</p>
+<h5 id="基于数据库表"><a href="#基于数据库表" class="headerlink" title="基于数据库表"></a>基于数据库表</h5><p>这是相对比较简单的一种方式，直接创建一张锁表，然后通过操作该表的数据来实现。当我们要锁住某个方法或者资源的时候，我们就在该表中增加一条记录，想要释放锁的时候就删除该记录。</p>
+<p>表结构如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">create table &#39;methodLock&#39; (</span><br><span class="line"></span><br><span class="line"> &#39;id&#39; int(11) not null auto_increment comment &#39;主键&#39;,</span><br><span class="line"></span><br><span class="line"> &#39;method_name&#39; vachar(64) not null comment &#39;锁定的方法名&#39;，</span><br><span class="line"></span><br><span class="line"> &#39;desc&#39; varchar(1024) not null default &#39;备注信息&#39;，</span><br><span class="line"></span><br><span class="line"> &#39;update_time&#39; &#39;保存数据时间，自动生成&#39;</span><br><span class="line"></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>锁住方法是，执行sql：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into methodLock(method_name,desc) values (&#39;method_name&#39;,&#39;desc&#39;)</span><br></pre></td></tr></table></figure>
+
+<p>对 method_name 字段做唯一性约束，如果有多个请求提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以任务操作成功的那个县城获得了该方法的锁，可以执行方法体内容。</p>
+<p>方法执行完，释放锁，执行以下sql，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from methodLock where method_name &#x3D; &#39;method_name&#39;</span><br></pre></td></tr></table></figure>
+
+<p>弊端:</p>
+<p>1、这把锁强依赖数据库的可用性，数据库是一个单点，，数据库一旦挂掉，导致业务系统不可用</p>
+<p>2、这把锁没有失效时间，一旦解锁操作失败，就会导致锁记录一直在数据库中，其他线程无法获得该锁</p>
+<p>3、这把只能是非阻塞的，因为数据的insert操作，一旦插入失败就会直接报错。没有获得锁的线程并不会进入排队队列，想再次获得所就要再次出发获得锁操作</p>
+<p>解决:</p>
+<p>1、可搞两个数据库，数据库之前双向同步，一旦挂掉快速切换到备库上</p>
+<p>2、没失效时间？可以做个定时任务，每隔一定时间，清理超时数据</p>
+<p>3、非阻塞？ 可以做个while 循环，直到insert成功在返回成功。</p>
+<h5 id="基于数据库排他锁"><a href="#基于数据库排他锁" class="headerlink" title="基于数据库排他锁"></a>基于数据库排他锁</h5><p>我们还用刚刚创建的那张数据库表。可以通过数据库的排他锁来实现分布式锁。基于MySql的InnoDB引擎，可以使用以下方法来实现加锁操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public boolean lock() &#123;</span><br><span class="line"></span><br><span class="line"> connection.setAutoCommit(false);</span><br><span class="line"></span><br><span class="line"> while(true) &#123;</span><br><span class="line"></span><br><span class="line"> try &#123;</span><br><span class="line"></span><br><span class="line"> result &#x3D; select * from methodLock where method_name &#x3D; xxx for update;</span><br><span class="line"></span><br><span class="line"> if(result &#x3D; null) &#123;</span><br><span class="line"></span><br><span class="line"> return true;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> &#125; catch (Exception e) &#123;&#125;</span><br><span class="line"></span><br><span class="line"> sleep(1000);</span><br><span class="line"></span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> return false;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在查询语句后面添加 for update， 数据库在查询过程中给数据库表增加排它锁（这里再多提一句，InnoDB引擎在加锁的时候，只有通过索引进行检索的时候才会使用行级锁，否则会使用表级锁。这里我们希望使用行级锁，就要给method_name添加索引，值得注意的是，这个索引一定要创建成唯一索引，否则会出现多个重载方法之间无法同时被访问的问题。重载方法的话建议把参数类型也加上。） 当某条记录被加上排它锁，其他线程无法再在该记录上增加排它锁</p>
+<p>我们可以任务获得排它锁的线程既可以获得分布式锁，当获得所之后，可以执行方法的业务逻辑，执行完方法之后，再通过以下方法解锁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public void unlock() &#123;</span><br><span class="line"></span><br><span class="line"> connecion.commit();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过以上操作来释放锁。</p>
+<p>比较:</p>
+<p>相对于以上的方法，解决了无法释放锁和阻塞锁的问题</p>
+<p>阻塞锁？ for update 语句在执行成功之后立即返回，在执行失败时一直处于阻塞状态，直到成功</p>
+<p>锁定之后服务宕机，无法释放？使用这种方式，服务宕机之后数据库会自己把锁释放掉。</p>
+<p><strong>注意点:</strong></p>
+<p>1、这里有个问题，虽然我们对 method_name 使用了唯一索引，并且显示的使用了for update 是使用行级锁。但是mysql 会对查询进行优化，几遍在条件中使用了索引字段，但是否使用索引来检索数据是由mysql 通过判断不同执行计划的代价来决定，如果mysql 认为全表扫效率更高。比如对一些很小的表，他就不会使用索引了。这种情况下 innodb 将使用表锁，而不是行锁，若果发生这种情况就悲剧了。。。对于for update 的用法下期会想讲！<a target="_blank" rel="noopener" href="https://www.cnblogs.com/wangshiwen/p/9837408.html">https://www.cnblogs.com/wangshiwen/p/9837408.html</a></p>
+<p>2、当我们使用排它锁方法进行分布式锁的时候，那么一个排它锁如果长时间不提交的话，就会占用数据库连接，一旦类似的连接变多了，就可能把数据库连接池撑爆。</p>
+<p>总结:</p>
+<p>以上两种数据的分布式锁方式，都是依赖数据库的一张表。</p>
+<p>通过数据库实现的分布式锁的优点：直接借助数据库，容易理解</p>
+<p>缺点:存在各种各样的问题，需要各种方法来解决，导致整个方法变得非常复杂</p>
+<p>操作数据库需要一定的开销，性能需要考虑。</p>
+<p>使用数据库的行级锁的时候并不可靠，尤其当锁表并不大的时候</p>
+<h5 id="基于缓存实现分布式锁"><a href="#基于缓存实现分布式锁" class="headerlink" title="基于缓存实现分布式锁"></a>基于缓存实现分布式锁</h5><p>相对基于数据库实现的分布式锁，基于缓存的分布式锁性能方面相对会好一些。</p>
+<h5 id="基于Zookeeper实现分布式锁"><a href="#基于Zookeeper实现分布式锁" class="headerlink" title="基于Zookeeper实现分布式锁"></a>基于Zookeeper实现分布式锁</h5><p>未完待续…</p>
+
       
 
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
       
     </div>
     <div class="article-info article-info-index">
@@ -381,16 +275,84 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/09/10/%E5%85%B3%E4%BA%8E%E5%88%86%E5%B8%83%E9%94%81%E7%9A%84%E5%A4%9A%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2019/09/10/%E5%85%B3%E4%BA%8E%E5%88%86%E5%B8%83%E9%94%81%E7%9A%84%E5%A4%9A%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2019/09/11/JAVA%E5%9F%BA%E7%A1%80%E9%9D%A2%E8%AF%95%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          JAVA基础面试题
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/08/23/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">分布式事务解决方案</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -410,246 +372,14 @@
 
 
 
-
   
-    <article id="post-分布式事务解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/23/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">分布式事务解决方案</a>
-    </h1>
   
 
-        
-        <a href="/2019/08/23/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2019-08-23T06:16:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-23</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="开源方案"><a href="#开源方案" class="headerlink" title="开源方案"></a>开源方案</h1><h3 id="tcc-transaction-https-github-com-changmingxie-tcc-transaction"><a href="#tcc-transaction-https-github-com-changmingxie-tcc-transaction" class="headerlink" title="tcc-transaction:https://github.com/changmingxie/tcc-transaction"></a>tcc-transaction:<a target="_blank" rel="noopener" href="https://github.com/changmingxie/tcc-transaction">https://github.com/changmingxie/tcc-transaction</a></h3><h3 id="EasyTransacion-https-github-com-QNJR-GROUP-EasyTransaction"><a href="#EasyTransacion-https-github-com-QNJR-GROUP-EasyTransaction" class="headerlink" title="EasyTransacion: https://github.com/QNJR-GROUP/EasyTransaction"></a>EasyTransacion: <a target="_blank" rel="noopener" href="https://github.com/QNJR-GROUP/EasyTransaction">https://github.com/QNJR-GROUP/EasyTransaction</a></h3><h3 id="LCN-https-github-com-codingapi-tx-lcn-http-www-txlcn-org-zh-cn"><a href="#LCN-https-github-com-codingapi-tx-lcn-http-www-txlcn-org-zh-cn" class="headerlink" title="LCN: https://github.com/codingapi/tx-lcn http://www.txlcn.org/zh-cn/"></a>LCN: <a target="_blank" rel="noopener" href="https://github.com/codingapi/tx-lcn">https://github.com/codingapi/tx-lcn</a> <a target="_blank" rel="noopener" href="http://www.txlcn.org/zh-cn/">http://www.txlcn.org/zh-cn/</a></h3><h3 id="Raincat-https-github-com-Dromara-Raincat"><a href="#Raincat-https-github-com-Dromara-Raincat" class="headerlink" title="Raincat: https://github.com/Dromara/Raincat"></a>Raincat: <a target="_blank" rel="noopener" href="https://github.com/Dromara/Raincat">https://github.com/Dromara/Raincat</a></h3><h3 id="hmily-https-github-com-Dromara-hmily"><a href="#hmily-https-github-com-Dromara-hmily" class="headerlink" title="hmily: https://github.com/Dromara/hmily"></a>hmily: <a target="_blank" rel="noopener" href="https://github.com/Dromara/hmily">https://github.com/Dromara/hmily</a></h3><h3 id="myth-https-github-com-Dromara-myth"><a href="#myth-https-github-com-Dromara-myth" class="headerlink" title="myth: https://github.com/Dromara/myth"></a>myth: <a target="_blank" rel="noopener" href="https://github.com/Dromara/myth">https://github.com/Dromara/myth</a></h3>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">分布式事务</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Spring Cloud</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/08/23/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Mysql事务隔离级别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/23/Mysql%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/">Mysql事务隔离级别</a>
-    </h1>
   
 
-        
-        <a href="/2019/08/23/Mysql%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/" class="archive-article-date">
-  	<time datetime="2019-08-23T06:14:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-23</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="数据库事务的隔离级别有四种"><a href="#数据库事务的隔离级别有四种" class="headerlink" title="数据库事务的隔离级别有四种"></a>数据库事务的隔离级别有四种</h3><p>分别是Read uncommitted 、Read committed 、Repeatable read 、Serializable</p>
-        
-          <a class="article-more-a" href="/2019/08/23/Mysql%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Mysql</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">事务隔离级别</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/08/23/Mysql%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-浅谈-EnableConfigurationProperties-注解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/05/%E6%B5%85%E8%B0%88-EnableConfigurationProperties-%E6%B3%A8%E8%A7%A3/">浅谈 @EnableConfigurationProperties 注解</a>
-    </h1>
   
 
-        
-        <a href="/2019/01/05/%E6%B5%85%E8%B0%88-EnableConfigurationProperties-%E6%B3%A8%E8%A7%A3/" class="archive-article-date">
-  	<time datetime="2019-01-05T06:17:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="先说作用"><a href="#先说作用" class="headerlink" title="先说作用:"></a>先说作用:</h4><p>@EnableConfigurationProperties注解的作用是：使使用 @ConfigurationProperties 注解的类生效。</p>
-<h4 id="详解"><a href="#详解" class="headerlink" title="详解:"></a>详解:</h4>
-        
-          <a class="article-more-a" href="/2019/01/05/%E6%B5%85%E8%B0%88-EnableConfigurationProperties-%E6%B3%A8%E8%A7%A3/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">springboot</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/01/05/%E6%B5%85%E8%B0%88-EnableConfigurationProperties-%E6%B3%A8%E8%A7%A3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
 
 
@@ -672,8 +402,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
